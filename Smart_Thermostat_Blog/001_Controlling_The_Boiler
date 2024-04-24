@@ -1,32 +1,40 @@
+---
+
 ### Introduction
 
 Six months ago, I embarked on a project to replace my traditional thermostat with a custom-built, HomeKit-enabled smart thermostat powered by a Raspberry Pi and programmed in Python. This challenge was filled with learning opportunities—from controlling a boiler with a Raspberry Pi to integrating with HomeKit and fetching accurate room temperatures. As I navigated through these technical puzzles, I gained invaluable insights.
 
 In this blog series, I’ll share my journey, detailing the problems I encountered and how I solved them. While a basic understanding of programming and electrical concepts will be beneficial, I’ve made sure to explain everything in a way that's accessible to beginners as well.
 
-This first post dives into how I managed to control the boiler using a Raspberry Pi...
+This first post dives into how I managed to control the boiler using a Raspberry Pi.
 
 ### The first piece of the puzzle: controlling the boiler
 
 Adjusting the thermostat is a simple, everyday task we take for granted. We know that when we turn the dial it must somehow turn the boiler on or off to regulate the temperature. But how does it actually do this? 
 
-I started out by taking my existing thermostat off the wall to look at the cabling. It had 4 cables attached: L, N, SL and one that looked like a clock for timing functions, which we’ll ignore for now. From my basic electrical knowledge I knew that L stands for Live (or Line in some regions), N stands for Neutral and SL stands for Switched Live (or similarly Switched Line). We’ll return to focus on Live and Neutral shortly, but for now seeing Switched Live gave me a hint that there’s some kind of switch within the thermostat that turns on or off on demand. That could only mean one thing: a relay!
+I started out by taking my existing thermostat off the wall to look at the cabling. It had 4 cables attached: L, N, SL and one that looked like a clock for timing functions. ****From my basic electrical knowledge I knew that L stands for Live (or Line in some regions), N stands for Neutral and SL stands for Switched Live (or similarly Switched Line).
+
+![Screenshot 2024-04-23 at 06.53.34.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/b0aaa254-6ab4-4a40-b433-02e08f411aa2/d357836e-b696-43f6-ae14-c1526ff2712f/Screenshot_2024-04-23_at_06.53.34.png)
+
+We’ll return to focus on Live and Neutral shortly, but for now seeing Switched Live gave me a hint that there’s some kind of switch within the thermostat that turns on or off on demand. That could only mean one thing: a relay.
 
 ### What is a relay?
 
-A relay is an electrically operated switch that allows you to control a high-power circuit (like that of the heating system) with a low-power circuit (like one powered by a Raspberry Pi). Why can’t you just directly control the high-power circuit? One big reason is safety: it prevents the user having to directly interact with high-power devices and provides a physical barrier. Another reason is because microcontrollers (like a Raspberry Pis or the microcontroller inside a thermostat) operate at low voltages and cannot directly handle the high power of ….?!?!
+A relay is an electrically operated switch that allows you to control a high-power circuit (like that of the heating system) with a low-power circuit (like one powered by a Raspberry Pi). Why can’t you just directly control the high-power circuit? One big reason is safety: it prevents the user having to directly interact with high-power devices and provides a physical barrier. Another reason is because microcontrollers (like a Raspberry Pis or the microcontroller inside a thermostat) operate at low voltages and cannot directly handle the high voltages of household appliances or industrial equipment.
 
 A relay consists of an electromagnet and a switch: when electric current from the low-power device passes through the coil of the electromagnet, it creates a magnetic field that closes the switch and powers on the high-power circuit. This also works the other way around: when the current from the low-power device stops, the magnetic field dissipates and the switch opens, cutting off the power to the high-circuit.
 
-*Diagram of relay here.*
+*(Note for Paul - I’ll show this relay at rest diagram and then an energised relay with a closed switched next to it)*
 
-To help visualise it, here’s a diagram of the relay replacing the thermostat:
+![Screenshot 2024-04-23 at 06.45.00.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/b0aaa254-6ab4-4a40-b433-02e08f411aa2/bf42f248-8054-4ca8-869f-65c44f89babc/Screenshot_2024-04-23_at_06.45.00.png)
 
-*Diagram of relay replacing the thermostat.*
+To help visualise things, here’s a diagram of the relay replacing the thermostat:
+
+![IMG_1278.jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/b0aaa254-6ab4-4a40-b433-02e08f411aa2/f2f73140-8631-4fe4-8b06-da3d84c50059/IMG_1278.jpg)
 
 All this relay talk might make sense in theory, but how does that translate to the real world using a Raspberry Pi? 
 
-### Choosing a relay
+### Selecting a relay
 
 I chose a [Waveshare 3 terminal relay](https://thepihut.com/products/raspberry-pi-relay-board) because it has three relays so I can eventually control three heating zones. It was also a Raspberry Pi HAT (Hardware Attached on Top) which meant I could plug it directly into the Raspberry Pi’s header pins.
 
@@ -46,27 +54,25 @@ Let’s return to the thermostat hanging off the wall and see if we can workout 
 
 **Replacing the thermostat with a Raspberry Pi and relay**
 
-Before I started messing about with power cables, I switched off the power for the heating system at my consumer unit. I used a [voltage detector pen](https://www.screwfix.com/p/fluke-ac-non-contact-voltage-detector-pen-1000v-ac/85949) to verify it was definitely off. If you don’t feel comfortable with household electrics I’d definitely stop here and get someone to help. 
+Before I started messing about with power cables, I switched off the power for the heating system at my consumer unit and used a [voltage detector pen](https://www.screwfix.com/p/fluke-ac-non-contact-voltage-detector-pen-1000v-ac/85949) to confirm it was definitely off. If you don’t feel comfortable with household electrics I’d definitely stop here and get someone to help. 
 
-If we look at our problem again, we have four cables coming out the wall (L, N, SL and timer) and two terminals going into our relay. Something doesn’t add up…
+If we look at our problem again, we have four cables coming out the wall (L, N, SL and timer) but only two terminals going into our relay. Something doesn’t add up…
 
-Let’s work through a process of elimination to decide which terminals we need. The timer can be instantly ruled out. We need power for the heating circuit, so connecting Live to Common seems promising, as Common provides power to either the NO or NC terminal. That leaves us with Neutral and Switched Live to consider. Switched Live is crucial because it allows us to control when power is delivered to the heating system via a relay (which is just a *switch*) so let’s go with Switched Live in the NO terminal.
-
-If we visualise our original thermostat circuit, we have something like this:
-
-*Diagram of thermostat*
+Let’s work through a process of elimination to decide which terminals we need. The timer can be instantly ruled out as we’re not interested in that functionality for now. We need power for the heating circuit, so connecting Live to Common seems promising, as Common provides power to either the NO or NC terminal. That leaves us with Neutral and Switched Live to consider. Switched Live is crucial because it allows us to control when power is delivered to the heating system via the relay so let’s go with Switched Live in the NO terminal.
 
 Replacing our thermostat with a relay would look something like this:
 
-*Diagram of relay powered circuit.*
+![Screenshot 2024-04-23 at 06.55.43.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/b0aaa254-6ab4-4a40-b433-02e08f411aa2/e3b3125e-b5c2-4292-b574-09a49447f444/Screenshot_2024-04-23_at_06.55.43.png)
 
 ### Tidying up the loose ends
 
-You might notice we now have a Neutral cable hanging out of the wall going nowhere, which isn’t really ideal! Why don’t we need this additional cable for our circuit? Our existing thermostat was powered on even when the relay wasn’t activated (i.e. for the LEDs and the controller that measures the temperature) so it required an electrical circuit to control that: power coming through Live and returning through Neutral. The Switched Live was an additional return that was only powered to turn on the heating system. Our system doesn’t require the always powered circuit to control the thermostat, since we’re using a Raspberry Pi to control the system and that’s powered via a ****mains power supply.
+You might notice we now have a Neutral cable hanging out of the wall going nowhere, which isn’t really ideal! Why don’t we need this additional cable for our circuit? Our existing thermostat was powered on even when the relay wasn’t activated (i.e. for the LEDs and the controller that measures the temperature) so it required a constantly closed electrical circuit to control that: power coming through Live and returning through Neutral. The Switched Live was an additional return that was only powered to turn on the heating system. Our system doesn’t require the always powered circuit to control the thermostat, since we’re using a Raspberry Pi to control the system and that’s powered via a ****mains power supply.
 
 Before switching the power back on, I needed to disconnect the Neutral and timer cables so they were inactive cables and there was no chance of power coming from the heating unit. This was easy enough for me because I had a clearly labelled HIU (Heating Interface Unit) but this could be completely different based on your setup. 
 
-*Photo of HIU here.* 
+![IMG_6900.jpeg](https://prod-files-secure.s3.us-west-2.amazonaws.com/b0aaa254-6ab4-4a40-b433-02e08f411aa2/9785723d-2c45-4af5-b348-e6734b0ce5f5/IMG_6900.jpeg)
+
+![002_UFH_Original_Wiring.jpeg](https://prod-files-secure.s3.us-west-2.amazonaws.com/b0aaa254-6ab4-4a40-b433-02e08f411aa2/a9482dae-f9a0-43dc-82ba-168c074dfef7/002_UFH_Original_Wiring.jpeg)
 
 Because I knew what zone my room was, I knew which cables I was looking for in the HIU. I unhooked the Neutral and timer cables from here and used some Wago clips on each end of the cable to ensure no bare copper was left lying around.
 
@@ -76,11 +82,11 @@ Now I flicked the power back on and used the voltage detector to verify that the
 
 The next question was how to actually control the relay from the Raspberry Pi. To get started I made a simple circuit with an LED, so I could write the code without breaking the boiler (at this point I didn’t know it would work), which I’ll skip because I now know this works.
 
-The relay is controlled via the GPIO (General Purpose Input Output) pins on the Raspberry Pi, which we can interface with via the `RPi.GPIO` Python library. Relays have two options for energizing them: active low or active high. **EXPLAIN ACTIVE HIGH AND ACTIVE LOW.**
+Relays have two options for energizing them: active low or active high. Active high means the relay is activated when a high voltage (usually the same as the supply voltage of the controller) is sent to the relay’s control pin. Active low means the relay is activated when a low voltage (usually 0 volts) is sent to the relay’s control pin. All this information can be found from the [wiki](https://www.waveshare.com/wiki/RPi_Relay_Board) (the Pi Hut has fantastic info listed with their products).
 
-This simple means when you want to trigger the relay, you set it to `GPIO.HIGH` or `GPIO.LOW` . Each port also has a channel number, which we use to communicate with it. All this information can be found from the data sheet or [wiki](https://www.waveshare.com/wiki/RPi_Relay_Board) (the pi hut has fantastic info).
+The relay is controlled via the GPIO (General Purpose Input Output) pins on the Raspberry Pi, which we can interface with via the `RPi.GPIO` Python library. Since our relay is active low, we just need to set `GPIO.LOW` to energise the relay and `GPIO.HIGH` to turn it off. Remember our controller has three relays, which each have their own channel number that we’ll use to communicate with. Since we’re only using one relay for the moment we only need one of the channels.
 
-I decided to wrap the relay functionality in a class to abstract away the specifics of the relay; once you’ve set the relay up you don’t really care about the pins or active low or high, you just want to turn it on or off! 
+I decided to wrap the relay functionality in a Python class to abstract away the specifics of the relay; once you’ve set the relay up you don’t really care about the pins or active low or high, you just want to turn it on or off! 
 
 ```python
 import RPi.GPIO as GPIO
@@ -119,7 +125,6 @@ if __name__ == "__main__":
     relay = Relay(pin_number)
 
     try:
-        # Test turning the relay ON
         print("Testing Relay ON:")
         relay.turn_on()
         time.sleep(1)  # Short pause to observe the change
@@ -128,7 +133,6 @@ if __name__ == "__main__":
         else:
             print("Test Failed: Relay is not active when it should be.")
 
-        # Test turning the relay OFF
         print("Testing Relay OFF:")
         relay.turn_off()
         time.sleep(1)  # Short pause to observe the change
@@ -142,6 +146,14 @@ if __name__ == "__main__":
         relay.cleanup()
 ```
 
-That wraps up the first piece of our puzzle. We can now control the boiler with a Raspberry Pi. Now we still have a way to go as I’m s…
+### Conclusion
 
-Got any comments or corrections? This was a learning process for me so I’d love to hear any feedback so I can improve!
+If everything went to plan you should now be able to use the relay class to turn your boiler on or off. How obvious that is will depend on your specific setup; fortunately my HIU had a light on so I could visually see when the boiler was on in my zone.
+
+However, we now have a Raspberry Pi and cables hanging out the wall and our smart thermostat isn’t even a thermostat yet since you need to manually turn it on or off, which probably isn’t ideal for the rest of your household.
+
+In the next part we’ll look into how we can measure the temperature of the room and use that to regulate the temperature using the relay.
+
+Got any comments or corrections? This was a learning process for me so I’d love to hear any feedback! 
+
+---
