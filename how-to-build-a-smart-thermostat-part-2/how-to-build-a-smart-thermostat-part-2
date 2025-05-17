@@ -1,0 +1,156 @@
+### Introduction
+
+In the first post of this series I explained how to control a boiler with a Raspberry Pi. But that’s only half the functionality of a thermostat. Next, we need to fetch the current temperature in order for the thermostat to regulate itself.
+
+In this post we'll cover choosing a temperature sensor, how it works, wiring it up and writing the code to parse the temperature.
+
+### Choosing a temperature sensor
+
+I chose the [DS18B20](https://thepihut.com/products/waterproof-ds18b20-digital-temperature-sensor-extras?variant=27740417873) temperature sensor because it has excellent documentation on the Pi Hut and seems to be a very reliable sensor. 
+
+### How does a sensor fetch the temperature?
+
+Let’s take a brief detour into the inner workings of an electrical circuit. Electricity is the movement of electrons around a circuit; voltage is what pushes the electrons around the circuit. I find it a useful simplification to view electrons as cars driving around a track and voltage the horsepower that pushes the cars around.
+
+There is an electrical component called a diode which allows current to flow in one direction only. A diode contains a small junction that electrons must push through and a helpful side effect of this is that when the electrons move through the diode, there is a small reduction in voltage, known as voltage drop.
+
+The key to temperature sensing is that the voltage drop varies with the temperature and it's consistent and repeatable. So if you know what the various voltage drops are at different temperatures, you can measure the current voltage drop and work backwards to find the temperature. This is exactly what the temperature sensor does. 
+
+### Getting the temperature to the Raspberry Pi
+
+Now we have a sensor that knows the temperature, how do we get that to the Raspberry Pi? The sensor has three cables: one for 3V (power), one for ground, and one for data. I used a breadboard connected to the Raspberry Pi via a ribbon cable to make it easier to access the header pins. 3V and ground were self explanatory, and the data cable went into one of the data ports, which for me was #4. 
+
+*Diagram of each connection, including the resistor.*
+
+The sensor also comes with something called a pull-up resistor - so, why is that needed? 
+
+The data cable transmits information by toggling between digital 1s and 0s, which correspond to high (3.3V) and low (0V) voltages on the line. 
+
+In its idle state, it is not sending anything. However, this means the pin into the breadboard can pick up random noise from other electronic components, meaning the signal can fluctuate unpredictably, leading to unreliable readings. 
+
+What's needed is a way to ensure the data line is only ever high or low, even in its idle state; this is where the pull up resistor comes in. It provides a weak connection to power, ensuring the line sits at a high voltage when nothing is actively pulling it low.
+
+---
+
+**NEEDS WORK ON ACCURACY**
+
+This left me with a couple of questions:
+
+Why don't we just connect the sensor to the power so it's always at a high state? Well in that instance, the power is too high that the sensor can't overpower it to send 0.
+
+How do we know the difference between the sensor sending high and the default state of high? It turns out it's not just the voltage (high or low) that matter; it's the transitions and timings between the states too. So when the device is ready to communicate, it pulls the line down to low to signal activity. After that, the data transfer of high and low correspond to precise timing patterns defined by data transfer protocols. 
+
+--- 
+So we're all wired up now, but how do we actually read the temperature?
+
+### Writing the code 
+
+To interface with the sensor, there's a lot of boilerplate that I borrowed from other tutorials so I've added the whole file here which is commented up to guide you through.
+
+I've used async-await because further down the line (which I'll cover in a future post) I integrate this with `HomeKit` which requires more asynchronous work, so using async-await allows this code to not block any execution.
+
+```python
+import os
+import glob
+import asyncio
+from typing import NamedTuple
+
+"""
+This script allows you to read temperature data from a DS18B20 temperature sensor connected to a Raspberry Pi, return the temperature in celsius and fahrenheit.
+
+Prerequisites:
+- A Raspberry Pi with Raspbian OS installed.
+- A DS18B20 temperature sensor properly connected to the GPIO pins of the Raspberry Pi (see references).
+- The 1-Wire interface enabled on the Raspberry Pi.
+
+Configuration:
+Before running the script, ensure the Raspberry Pi is configured to interface with the DS18B20 sensor:
+1. Add the line 'dtoverlay=w1-gpio' to /boot/config.txt. This enables the 1-Wire interface on the GPIO pin used by the sensor.
+2. Add 'w1-gpio' and 'w1-therm' to /etc/modules. This ensures that the necessary modules are loaded at boot.
+
+References:
+For more information on setting up and using the DS18B20 temperature sensor with a Raspberry Pi, visit:
+- https://thepihut.com/blogs/raspberry-pi-tutorials/ds18b20-one-wire-digital-temperature-sensor-and-the-raspberry-pi
+- https://pimylifeup.com/raspberry-pi-temperature-sensor/
+
+"""
+class TemperatureInfo(NamedTuple):
+    celcius: float
+    fahrenheit: float
+  
+# This path is where 1-wire devices are mounted in the filesystem of a Linux-based system.
+base_dir = '/sys/bus/w1/devices/'
+
+# The '28' prefix is common for DS18B20 temperature sensors. Since we only have 1 sensor, we just grab the first.
+try:
+    device_folder = glob.glob(base_dir + '28*')[0]
+except IndexError:
+    raise FileNotFoundError("No temperature sensor found; is it wired correctly?")
+
+# The 'w1_slave' is provided by 'w1-therm' module and contains the raw temperature data from the sensor.
+device_file = device_folder + '/w1_slave'
+
+async def _read_temp_raw():
+    try:
+        # Open is not natively async, so we use 'asyncio' to run it in a threadpool
+        with await asyncio.to_thread(open, device_file, 'r') as f:
+            lines = await asyncio.to_thread(f.readlines)
+        return lines
+    except Exception as e:
+        raise IOError(f"Failed to read device file; is the temperature sensor wired correctly? Error: {e}")
+
+async def read_temp() -> TemperatureInfo:
+    # The raw temperature comes over two lines in the following format:
+    # 54 01 4b 46 7f ff 0c 10 fd : crc=fd YES
+    # 54 01 4b 46 7f ff 0c 10 fd t=21250
+    lines = await _read_temp_raw()
+
+    max_attempts = 10
+    attempts = 0
+    
+    # The first line is a checksum to indicate if the measurement is valid. 
+    # If the line ends in 'YES', we can proceed. If 'NO', the sensor is not ready so we wait 0.2 seconds.
+    while True:
+        try:
+            if lines[0].strip()[-3:] == 'YES':
+                break  # Exit loop if the condition is met
+            elif attempts >= max_attempts:
+                raise TimeoutError("Sensor read attempt exceeded maximum retries.")
+        except IndexError:
+            raise IndexError("Unexpected data format from sensor; is the temperature sensor wired correctly?")
+
+        await asyncio.sleep(0.2)
+        lines = await _read_temp_raw()
+        attempts += 1
+
+    # Now we find the actual raw data by finding 't='.
+    equals_pos = lines[1].find('t=')
+
+    # If `equals_pos` is not -1, it means 't=' has been located.
+    if equals_pos != -1:
+        temp_string = lines[1][equals_pos+2:]
+        temp_c = float(temp_string) / 1000.0
+        temp_f = temp_c * 9.0 / 5.0 + 32.0
+        return TemperatureInfo(celcius=temp_c, fahrenheit=temp_f)
+    
+async def main():
+    try:
+        temperature_info = await read_temp()
+        print(f"Temperature: {temperature_info.celcius}°C, {temperature_info.fahrenheit}°F")
+    except Exception as e:
+        print(f"Error reading temperature: {e}")
+
+if __name__ == "__main__":
+    # asyncio.run() is used to run the main function, which handles the async call to read_temp
+    asyncio.run(main())
+```
+
+
+## Conclusion
+
+That's the second piece of the puzzle solved. This, along with the work covered in the first post [INSERT LINK] means we have two independent parts of a thermostat: the ability to control a boiler and the ability to fetch the temperature. 
+
+In the final post, we'll tie these together to make a functioning system and add smart home integration.
+
+Got any comments or corrections? This was a learning process for me so I’d love to hear any feedback.
+
