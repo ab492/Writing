@@ -22,7 +22,7 @@ The beauty of this sensor is the analog data (that is, the voltage drop informat
 
 Now we have a sensor that knows the temperature, how do we get that to the Raspberry Pi? The sensor has three cables: one for 3V (power), one for ground, and one for data. I used a breadboard connected to the Raspberry Pi via a ribbon cable to make it easier to access the header pins. 3V and ground were self explanatory, and the data cable went into one of the data ports, which for me was #4. 
 
-The sensor also comes with something called a pull-up resistor - so, why is that needed? 
+The sensor also comes with a pull-up resistor—so why is that necessary?
 
 The data cable transmits information by toggling between digital 1s and 0s, which correspond to high (3.3V) and low (0V) voltages on the line. 
 
