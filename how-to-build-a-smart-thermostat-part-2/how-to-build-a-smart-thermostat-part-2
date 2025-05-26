@@ -1,6 +1,6 @@
 ### Introduction
 
-In the first post of this series I explained how to control a boiler with a Raspberry Pi. But that’s only half the functionality of a thermostat. Next, we need to fetch the current temperature in order for the thermostat to regulate itself.
+In the first post of this series I explained how to control a boiler with a Raspberry Pi. But that’s only half the functionality of a thermostat. Next, we need to fetch the current temperature to allow the thermostat to adjust the heating or cooling as needed.
 
 In this post we'll cover choosing a temperature sensor, how it works, wiring it up and writing the code to parse the temperature.
 
