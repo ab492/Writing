@@ -30,6 +30,8 @@ In its idle state, it is not sending anything. However, this means the pin into 
 
 What's needed is a way to ensure the data line is only ever high or low, even in its idle state. This is where the pull up resistor comes in. It connects the data line to power but uses a high resistance to ensure the connection weak enough to be overpowered by the sensor when it wants to send 0v.
 
+If the resistor wasn't there, the data line would always be at 3.3V and the sensor wouldn't be able to pull the line down to 0V. 
+
 Putting that together, we're left with something that looks like this:
 
 ![A circuit diagram of power, ground, data and a pull up resistor connected to a Raspberry Pi.](001.jpeg)
