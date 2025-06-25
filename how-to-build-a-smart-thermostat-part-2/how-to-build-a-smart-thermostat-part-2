@@ -2,7 +2,7 @@
 
 In the [first post of this series](LINK HERE) I explained how to control a boiler with a Raspberry Pi. But that’s only half the functionality of a thermostat. To know when to adjust the boiler, the thermostat needs to know the current and desired temperatures.
 
-In this post we'll cover choosing a temperature sensor, how it works, wiring it up and writing the code to parse the temperature.
+In this post we'll cover choosing a temperature sensor, how it works, wiring it up, and writing the code to parse the temperature.
 
 ### Choosing a temperature sensor
 
