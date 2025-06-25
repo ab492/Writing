@@ -4,10 +4,6 @@ In the [first post of this series](LINK HERE) I explained how to control a boile
 
 In this post we'll cover choosing a temperature sensor, how it works, wiring it up, and writing the code to parse the temperature.
 
-### Choosing a temperature sensor
-
-I chose the [DS18B20](https://thepihut.com/products/waterproof-ds18b20-digital-temperature-sensor-extras?variant=27740417873) temperature sensor because it has excellent documentation on the Pi Hut and seems to be a very reliable sensor. 
-
 ### How does a sensor fetch the temperature?
 
 Let’s take a brief detour into the inner workings of an electrical circuit. Electricity is the movement of electrons around a circuit; voltage is what pushes the electrons around the circuit. I find it a useful simplification to view electrons as cars driving around a track and voltage the horsepower that pushes the cars around.
