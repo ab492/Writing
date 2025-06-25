@@ -44,7 +44,7 @@ Now we have the sensor wired up, how do we actually read the temperature?
 
 To interface with the sensor, there's a lot of boilerplate that I borrowed from other tutorials. I've added the whole file here, with comments to guide you through.
 
-I've used async-await because further down the line (which I'll cover in a future post) I integrate this with `HomeKit` which requires more asynchronous work, so using async-await allows this code to not block any execution.
+To remain compatible with `HomeKit` integration, I've used async-await. This guarantees we won't block any other code execution happening elsewhere.
 
 ```python
 import os
