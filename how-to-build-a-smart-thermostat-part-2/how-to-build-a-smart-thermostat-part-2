@@ -10,7 +10,7 @@ Let’s take a brief detour into the inner workings of an electrical circuit. El
 
 There is an electrical component called a diode which allows current to flow in one direction only. A diode contains a small junction that electrons must push through and a helpful side effect of this is that when the electrons move through the diode, there is a small reduction in voltage, known as voltage drop.
 
-The key to temperature sensing is that the voltage drop varies with the temperature and it's consistent and repeatable. So if you know what the various voltage drops are at different temperatures, you can measure the current voltage drop and work backwards to find the temperature. This is exactly what the temperature sensor does. 
+The key to temperature sensing is that this voltage drop varies predictably based on the current temperature. So, if you know what the various voltage drops are at different temperatures, you can measure the current voltage drop and work backwards to find the temperature. This is what the temperature sensor does. 
 
 The beauty of this sensor is the analog data (that is, the voltage drop information) is internally converted to digital data and transmitted to the Raspberry Pi. 
 
