@@ -12,7 +12,7 @@ There is an electrical component called a diode which allows current to flow in 
 
 The key to temperature sensing is that this voltage drop varies predictably based on the current temperature. So, if you know what the various voltage drops are at different temperatures, you can measure the current voltage drop and work backwards to find the temperature. This is what the temperature sensor does. 
 
-The beauty of this sensor is the analog data (that is, the voltage drop information) is internally converted to digital data and transmitted to the Raspberry Pi. 
+The beauty of this sensor -- I'm using [DS18B20](https://thepihut.com/products/waterproof-ds18b20-digital-temperature-sensor-extras?variant=27740417873) from the Pi Hut -- is that the analog data (that is, the voltage drop information) is internally converted to digital data and transmitted to the Raspberry Pi. 
 
 ### Getting the temperature to the Raspberry Pi
 
