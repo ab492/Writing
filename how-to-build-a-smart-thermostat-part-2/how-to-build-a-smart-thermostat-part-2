@@ -90,8 +90,8 @@ device_file = device_folder + '/w1_slave'
 async def _read_temp_raw():
     try:
         # Open is not natively async, so we use 'asyncio' to run it in a threadpool
-        with await asyncio.to_thread(open, device_file, 'r') as f:
-            lines = await asyncio.to_thread(f.readlines)
+        with await asyncio.to_thread(open, device_file, 'r') as raw_data:
+            lines = await asyncio.to_thread(raw_data.readlines)
         return lines
     except Exception as e:
         raise IOError(f"Failed to read device file; is the temperature sensor wired correctly? Error: {e}")
