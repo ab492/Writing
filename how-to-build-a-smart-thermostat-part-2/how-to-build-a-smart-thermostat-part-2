@@ -20,7 +20,7 @@ Now we have a sensor that knows the temperature, how do we get that data to the 
 
 The sensor also comes with a pull-up resistor. But what is that for?
 
-The data cable transmits information by toggling between digital 1s and 0s, which correspond to high (3.3V) and low (0V) voltages on the line. 
+The data cable transmits information by sending 1s -- corresponding to high (3.3V) voltages -- and 0s -- corresponding to low (0V) voltages -- on the line. 
 
 In its idle state, it is not sending anything. However, this means the pin into the breadboard can pick up random noise from other electronic components, meaning the signal can fluctuate unpredictably, leading to unreliable readings. 
 
