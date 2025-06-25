@@ -57,7 +57,7 @@ This script allows you to read temperature data from a DS18B20 temperature senso
 
 Prerequisites:
 - A Raspberry Pi with Raspbian OS installed.
-- A DS18B20 temperature sensor properly connected to the GPIO pins of the Raspberry Pi (see references).
+- A DS18B20 temperature sensor properly connected to the GPIO (General Purpose Input/Output) pins of the Raspberry Pi (see references).
 - The 1-Wire interface enabled on the Raspberry Pi.
 
 Configuration:
