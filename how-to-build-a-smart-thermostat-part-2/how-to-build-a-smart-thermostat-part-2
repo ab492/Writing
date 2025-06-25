@@ -36,7 +36,7 @@ Putting that together, we're left with something that looks like this:
 
 ---
 
-How do we know the difference between the sensor sending a high value and the idle state of high? It's not just the high or low value that matter, the timing between the transitions matter too. When the device is ready to communicate, it pulls the line down to low to signal activity. After that, the data transfer of high and low correspond to precise timing patterns defined by data transfer protocols.
+How do we know the difference between the sensor sending a high value and the idle state of high? It's not just the high or low value that matter, the timing between the transitions matter too. When the device is ready to communicate, it pulls the line down to low to signal activity. After that, the data transfer of high and low correspond to precise timing patterns defined by [data transfer protocols](https://cdn.shopify.com/s/files/1/0176/3274/files/DS18B20_8250021c-fcd0-4fb2-90e9-05d6c39d7d76.pdf?v=1676904940#page=15).
 
 Now we have the sensor wired up, how do we actually read the temperature?
 
