@@ -22,7 +22,7 @@ The sensor also comes with a pull-up resistor. But what is that for?
 
 The data cable transmits information by sending 1s -- corresponding to high (3.3V) voltages -- and 0s -- corresponding to low (0V) voltages -- on the line. 
 
-In its idle state, it is not sending anything. However, this means the pin into the breadboard can pick up random noise from other electronic components, meaning the signal can fluctuate unpredictably, leading to unreliable readings. 
+In its idle state, the sensor is not sending anything. However, this means the pin into the breadboard can pick up random noise from other electronic components, meaning the signal can fluctuate unpredictably, leading to unreliable readings. 
 
 What's needed is a way to ensure the data line is only ever high or low, even in its idle state. This is where the pull up resistor comes in. It connects the data line to power but uses a high resistance to ensure the connection weak enough to be overpowered by the sensor when it wants to send 0v.
 
