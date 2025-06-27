@@ -1,3 +1,10 @@
+---
+title: How to Build a Smart Thermostat Part 2
+date: 2025-06-27
+layout: post.njk
+tags: post
+---
+
 ### Introduction
 
 In the [first post of this series](LINK HERE) I explained how to control a boiler with a Raspberry Pi. But that’s only half the functionality of a thermostat. To know when to adjust the boiler, the thermostat needs to know the current and desired temperatures.

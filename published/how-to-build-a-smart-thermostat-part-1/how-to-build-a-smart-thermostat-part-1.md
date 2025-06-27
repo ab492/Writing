@@ -1,6 +1,6 @@
 ---
 title: How to Build a Smart Thermostat Part 1
-date: 2022-07-22
+date: 2024-07-22
 layout: post.njk
 tags: post
 ---
