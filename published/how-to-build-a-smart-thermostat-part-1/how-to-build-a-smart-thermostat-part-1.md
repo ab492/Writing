@@ -1,6 +1,6 @@
 ---
 title: How to Build a Smart Thermostat Part 1
-date: 2022-07-22
+date: 2024-07-22
 layout: post.njk
 tags: post
 ---
@@ -150,12 +150,8 @@ if __name__ == "__main__":
 
 Fortunately my HIU had a light for each zone so I could verify that the relay did power on the boiler.
 
-
 ### Conclusion
 
 That’s the first piece of the puzzle solved. However, we now have a Raspberry Pi and cables hanging out the wall and our smart thermostat isn’t even a thermostat yet since you need to manually turn it on or off using our Python code, which didn't go down well in my house. 
 
-
 In the next part we’ll look into how we can measure the temperature of the room and use that to regulate the temperature using the relay.
-
-Got any comments or corrections? This was a learning process for me so I’d love to hear any feedback.
