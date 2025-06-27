@@ -6,7 +6,7 @@ In this post we'll cover choosing a temperature sensor, how it works, wiring it 
 
 ### How does a sensor fetch the temperature?
 
-Let’s take a brief detour into the inner workings of an electrical circuit. Electricity is the movement of electrons around a circuit; voltage is what pushes the electrons around the circuit. I find it a useful simplification to view electrons as cars driving around a track and voltage the horsepower that pushes the cars around.
+Let’s take a brief detour into the inner workings of an electrical circuit. Electricity is the movement of charged particles around a circuit -- often electrons in metal wires. Voltage is what drives this motion. The classic metaphor is water in a pipe, where voltage is compared to the pressure that pushes water through the pipe.
 
 There is an electrical component called a diode which allows current to flow in one direction only. A diode contains a small junction that electrons must push through and a helpful side effect of this is that when the electrons move through the diode, there is a small reduction in voltage, known as voltage drop.
 
