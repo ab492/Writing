@@ -1,3 +1,10 @@
+---
+title: How to Build a Smart Thermostat Part 1
+date: 2022-07-22
+layout: post.njk
+tags: post
+---
+
 ### Introduction
 Thermostats are a piece of technology that every home has and they’re getting smarter all the time. In the race to decarbonisation, reducing our energy consumption by being efficient with how we heat our homes is crucial. To better understand my own heating system, I recently replaced my traditional thermostat with a custom-built smart version.
 
@@ -12,9 +19,9 @@ How does turning our thermostat up or down control our boiler?
 
 I took my existing thermostat off the wall to look at the cabling. It had four cables attached: one labelled “L”, one labelled “N”, one labelled “SL” and one that looked like a clock for timing functions. From my basic electrical knowledge I knew that L stood for Live (or Line in some regions), N stood for Neutral and SL stood for Switched Live (or some times Switched Line).
 
-![An image of the back of a thermostat, with L, N, SL and timer cables attached.](https://maverickprogramming.com/storage/posts/images/8jwiRyuyUhPvXm8VtIF3NI1tgtx2dzPEm3YoYFji.jpg)
+![An image of the back of a thermostat, with L, N, SL and timer cables attached.](./001.jpeg)
 
-![A diagram of Neutral, Switched Live and Live running between a thermostat and boiler.](https://maverickprogramming.com/storage/posts/images/u7ueE8OzeVq6nElHuNNOESjuevJ3ld8yMdqGSvUo.png)
+![A diagram of Neutral, Switched Live and Live running between a thermostat and boiler.](./002.png)
 
 Seeing Switched Live gave me a hint that there’s some kind of switch within the thermostat that turns something on or off on demand. That could only mean one thing: a relay.
 
@@ -24,10 +31,10 @@ A relay is an electrically operated switch that allows you to control a high-pow
 
 A relay consists of an electromagnet and a switch: when electric current from the low-power device passes through the coil of the electromagnet, it creates a magnetic field that closes the switch and powers on the high-power circuit. This also works the other way around: when the current from the low-power device stops, the magnetic field dissipates and the switch opens, cutting off the power to the high-power circuit.
 
-![A diagram of a relay at rest and an energized relay.](https://maverickprogramming.com/storage/posts/images/gqGVYq7paCy02mSVFcWvFVP6QZYyVQHrAVvuf93C.png)
+![A diagram of a relay at rest and an energized relay.](./003.png)
 To help visualise things, here’s a diagram of the relay connecting the thermostat to the boiler:
 
-![A diagram highlighting the relay connecting the thermostat to the boiler.](https://maverickprogramming.com/storage/posts/images/oTe1u8YIX15JnU6mpbR2oCYbwTC2V73wkeY0VmG4.png)
+![A diagram highlighting the relay connecting the thermostat to the boiler.](./004.png)
 So the first thing to do was replace the thermostat in the above diagram with a Raspberry Pi connected to a relay.
 
 ### Selecting a relay
@@ -57,15 +64,18 @@ We’re not interested in the timer functionality for now, so that can be ignore
 
 Replacing our thermostat with a relay would look something like this:
 
-![A diagram showing the Raspberry Pi, relay and boiler connected via Switched Live and Live. The neutral cable from the boiler has a question mark next to it.](https://maverickprogramming.com/storage/posts/images/Ky8jOIDVG2OKkuSEy7LY1GA7NctwkPGwcZU1AM09.png)
+![A diagram showing the Raspberry Pi, relay and boiler connected via Switched Live and Live. The neutral cable from the boiler has a question mark next to it.](./005.png)
+
 ### Tying up the loose ends
 
 We now have a Neutral cable hanging out of the wall, going nowhere. Why don’t we need this additional cable for our circuit? Our existing thermostat was powered on even when the relay wasn’t activated (that is, for the LEDs and the controller that measures the temperature) so it required a constantly closed electrical circuit to control that: power coming through Live and returning through Neutral. The Switched Live was an additional return that was only powered to turn on the heating system. Our system doesn’t require the always powered circuit to control the thermostat, since we’re using a Raspberry Pi to control the system and that’s powered via a mains power supply.
 
 Before switching the power back on, I needed to disconnect the Neutral and timer cables so they were inactive cables and there was no chance of power coming from the heating unit. Luckily, I had a clearly labelled HIU (Heating Interface Unit).
 
-![An image showing HIU with different heating zones, all well labelled.](https://maverickprogramming.com/storage/posts/images/fVXgISLkU8gJ9z9VgX36RQd6GEqZQVAO7aZmBjvy.jpg)
-![An annotated screenshot from the HIU image above. This shows the zone 3 cabling, including the timer and neutral cables to be disconnected.](https://maverickprogramming.com/storage/posts/images/QTz8MC5w0LKVToywqeydvFauncOyfIZHvA7j5AkC.jpg)
+![An image showing HIU with different heating zones, all well labelled.](./006.jpeg)
+
+![An annotated screenshot from the HIU image above. This shows the zone 3 cabling, including the timer and neutral cables to be disconnected.](./007.jpeg)
+
 Because I knew what zone my room was, I knew which cables I was looking for in the HIU. I unhooked the Neutral and timer cables from here and used some Wago clips on each end of the cable to ensure no copper was left exposed.
 
 Now I flicked the power back on and used the voltage detector to verify that the Neutral and timer didn’t miraculously have any power running through them.
