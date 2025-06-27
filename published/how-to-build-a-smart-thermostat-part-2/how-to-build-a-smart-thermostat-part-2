@@ -156,8 +156,6 @@ That's the second piece of the puzzle solved. This, along with the work covered 
 
 In the final post, we'll tie these together to make a functioning system and add smart home integration.
 
-Got any comments or corrections? This was a learning process for me so I’d love to hear any feedback.
-
 ### Notes
 - [Potentially useful information about the DS18B20 internal workings](https://electronics.stackexchange.com/questions/722882/how-does-ds18b20-temperature-sensor-get-the-temperature), although way above my electronics understanding.
 - [Excellent blog post](https://opensource.com/article/21/3/thermostat-raspberry-pi) about someone who built a similar thermostat. This was the inspiration for me to start this project.
