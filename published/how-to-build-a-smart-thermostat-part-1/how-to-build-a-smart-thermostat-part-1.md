@@ -154,4 +154,4 @@ Fortunately my HIU had a light for each zone so I could verify that the relay di
 
 That’s the first piece of the puzzle solved. However, we now have a Raspberry Pi and cables hanging out the wall and our smart thermostat isn’t even a thermostat yet since you need to manually turn it on or off using our Python code, which didn't go down well in my house. 
 
-In the next part we’ll look into how we can measure the temperature of the room and use that to regulate the temperature using the relay.
+In the [next part](/posts/published/how-to-build-a-smart-thermostat-part-2) we’ll look into how we can measure the temperature of the room and use that to regulate the temperature using the relay.
