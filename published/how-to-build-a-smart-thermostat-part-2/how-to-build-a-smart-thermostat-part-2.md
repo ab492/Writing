@@ -7,7 +7,7 @@ tags: post
 
 ### Introduction
 
-In the [first post of this series](LINK HERE) I explained how to control a boiler with a Raspberry Pi. But that’s only half the functionality of a thermostat. To know when to adjust the boiler, the thermostat needs to know the current and desired temperatures.
+In the [first post of this series](/posts/published/how-to-build-a-smart-thermostat-part-1) I explained how to control a boiler with a Raspberry Pi. But that’s only half the functionality of a thermostat. To know when to adjust the boiler, the thermostat needs to know the current and desired temperatures.
 
 In this post we'll cover choosing a temperature sensor, how it works, wiring it up, and writing the code to parse the temperature.
 
@@ -152,7 +152,7 @@ if __name__ == "__main__":
 
 ### Conclusion
 
-That's the second piece of the puzzle solved. This, along with the work covered in the first post [INSERT LINK] means we have two independent parts of a thermostat: the ability to control a boiler and the ability to fetch the temperature. 
+That's the second piece of the puzzle solved. This, along with the work covered in the [first post](/posts/published/how-to-build-a-smart-thermostat-part-1) means we have two independent parts of a thermostat: the ability to control a boiler and the ability to fetch the temperature.
 
 In the final post, we'll tie these together to make a functioning system and add smart home integration.
 
