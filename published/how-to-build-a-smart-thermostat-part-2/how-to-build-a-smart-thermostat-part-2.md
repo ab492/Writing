@@ -1,6 +1,6 @@
 ---
 title: How to Build a Smart Thermostat Part 2
-date: 2025-06-27
+date: 2025-07-03
 layout: post.njk
 tags: post
 ---
@@ -27,19 +27,19 @@ Now we have a sensor that knows the temperature, how do we get that data to the 
 
 The sensor also comes with a pull-up resistor. But what is that for?
 
-The data cable transmits information by sending 1s -- corresponding to high (3.3V) voltages -- and 0s -- corresponding to low (0V) voltages -- on the line. 
+The data cable transmits information by sending 1s -- corresponding to high (3V) voltages -- and 0s -- corresponding to low (0V) voltages -- on the line. 
 
 In its idle state, the sensor is not sending anything. However, this means the data pin into the breadboard can pick up random noise from other electronic components, meaning the signal can fluctuate unpredictably -- known as "floating" -- leading to unreliable readings. 
 
-What's needed is a way to ensure the data line is only ever high or low, even when idle. The pull-up resistor solves this by connecting the data line to the 3.3V line, providing a weak but steady connection to power. It gently supplies 3.3V to the data line, keeping it high when nothing else is connected. But because the connection is weak -- thanks to the high resistance -- the sesnor can easily override it and pull the line down to 0V when it needs to transmit a 0.
+What's needed is a way to ensure the data line is only ever high or low, even when idle. The pull-up resistor solves this by connecting the data line to the 3V line, providing a weak but steady connection to power. It gently supplies 3V to the data line, keeping it high when nothing else is connected. But because the connection is weak -- thanks to the high resistance -- the sesnor can easily override it and pull the line down to 0V when it needs to transmit a 0.
 
-Without the resistor, the data line would be stuck at 3.3V, and the sensor wouldn’t be able to bring it down to 0V.
+Without the resistor, the data line would be stuck at 3V, and the sensor wouldn’t be able to bring it down to 0V.
 
 Putting that together, we're left with something that looks like this:
 
-![A circuit diagram of power, ground, data and a pull up resistor connected to a Raspberry Pi.](001.jpeg)
+![A circuit diagram of power, ground, data and a pull up resistor connected to a Raspberry Pi.](001.png)
 
-![A photograph of the circuit.](002.jpeg)
+![A photograph of the circuit showing the temperature sensor connected to the Raspberry Pi.](002.jpeg)
 
 ---
 
