@@ -13,13 +13,13 @@ In this post we'll cover choosing a temperature sensor, how it works, wiring it 
 
 ### How does a sensor fetch the temperature?
 
-Let’s take a brief detour into the inner workings of an electrical circuit. Electricity is the movement of charged particles around a circuit -- often electrons in metal wires. Voltage is what drives this motion. The classic metaphor is water in a pipe, where voltage is compared to the pressure that pushes water through the pipe.
+Let’s take a brief detour into the inner workings of an electrical circuit. Electricity is the movement of charged particles around a circuit, often electrons in metal wires. Voltage is what drives this motion. The classic metaphor is water in a pipe, where voltage is compared to the pressure that pushes water through the pipe.
 
 There is an electrical component called a diode which allows current to flow in one direction only. A diode contains a small junction that electrons must push through and a helpful side effect of this is that when the electrons move through the diode, there is a small reduction in voltage, known as voltage drop.
 
 The key to temperature sensing is that this voltage drop varies predictably based on the current temperature. So, if you know what the various voltage drops are at different temperatures, you can measure the current voltage drop and work backwards to find the temperature. This is what the temperature sensor does. 
 
-The beauty of this sensor -- I'm using [DS18B20](https://thepihut.com/products/waterproof-ds18b20-digital-temperature-sensor-extras?variant=27740417873) from the Pi Hut -- is that the analog data (that is, the voltage drop information) is internally converted to digital data and transmitted to the Raspberry Pi. 
+The beauty of this sensor -- I'm using [DS18B20](https://thepihut.com/products/waterproof-ds18b20-digital-temperature-sensor-extras?variant=27740417873) -- is that the analog data (that is, the voltage drop information) is internally converted to digital data and transmitted to the Raspberry Pi. 
 
 ### Getting the temperature to the Raspberry Pi
 
@@ -31,7 +31,7 @@ The data cable transmits information by sending 1s -- corresponding to high (3V)
 
 In its idle state, the sensor is not sending anything. However, this means the data pin into the breadboard can pick up random noise from other electronic components, meaning the signal can fluctuate unpredictably -- known as "floating" -- leading to unreliable readings. 
 
-What's needed is a way to ensure the data line is only ever high or low, even when idle. The pull-up resistor solves this by connecting the data line to the 3V line, providing a weak but steady connection to power. It gently supplies 3V to the data line, keeping it high when nothing else is connected. But because the connection is weak -- thanks to the high resistance -- the sesnor can easily override it and pull the line down to 0V when it needs to transmit a 0.
+What's needed is a way to ensure the data line is only ever high or low, even when idle. The pull-up resistor solves this by connecting the data line to the 3V line, providing a weak but steady connection to power. It gently supplies 3V to the data line, keeping it high when nothing else is connected. But because the connection is weak -- thanks to the high resistance -- the sensor can easily override it and pull the line down to 0V when it needs to transmit a 0.
 
 Without the resistor, the data line would be stuck at 3V, and the sensor wouldn’t be able to bring it down to 0V.
 
@@ -40,8 +40,6 @@ Putting that together, we're left with something that looks like this:
 ![A circuit diagram of power, ground, data and a pull up resistor connected to a Raspberry Pi.](001.png)
 
 ![A photograph of the circuit showing the temperature sensor connected to the Raspberry Pi.](002.jpeg)
-
----
 
 How do we know the difference between the sensor sending a high value and the idle state of high? It's not just the high or low value that matter, the timing between the transitions matter too. When the device is ready to communicate, it pulls the line down to low to signal activity. After that, the data transfer of high and low correspond to precise timing patterns defined by [data transfer protocols](https://cdn.shopify.com/s/files/1/0176/3274/files/DS18B20_8250021c-fcd0-4fb2-90e9-05d6c39d7d76.pdf?v=1676904940#page=15).
 
