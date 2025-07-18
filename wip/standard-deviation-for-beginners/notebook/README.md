@@ -62,13 +62,3 @@ pip-compile requirements.in
 ```bash
 pip install -r requirements.txt
 ```
-
-## (TBD Legacy) How to install package locally (for use in Jupyter Notebooks)
-1. Run `scripts/setup.sh` from the main directory.
-
-## TODO
-- Look into best way to manage Python environment with specific packages (i.e. Jupyter).
-- Learn about variance.
-- Learn about overflow issue with large numbers.
-- Learn about precision in Python.
-
